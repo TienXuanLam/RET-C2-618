@@ -1,0 +1,16 @@
+# Runtime parameters — loaded by the framework at agent construction time,
+# accessible as self.config. Distinct from config/agent.yaml (static manifest).
+# See concepts/config-and-secrets.md.
+
+max_retry: 3
+memory_enabled: false
+timeout_s: 30
+
+# MainNode has no reachable retry path (it never returns AgentStatus.RETRY —
+# a malformed/empty LLM batch is either dropped per-question by the S-3
+# grounding gate or, if every question is dropped, returns status=error).
+# The default deploy-stg CI job does not set ANTHROPIC_API_KEY, so
+# self._llm is None and the standalone smoke invoke fails fast with a
+# clear config error rather than reaching a false "success". Declare the
+# real terminal state explicitly so Stage 5 evidence reflects it.
+stg_expected_status: error
